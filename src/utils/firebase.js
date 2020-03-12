@@ -1,7 +1,7 @@
 import firebase from 'firebase';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC9wOWf49tjWujuGDh-2zqeBHCNKqBfhOs",
+    apiKey: process.env.REACT_APP_firebase_apiKey,
     authDomain: "household-inventory-app.firebaseapp.com",
     databaseURL: "https://household-inventory-app.firebaseio.com",
     projectId: "household-inventory-app",
