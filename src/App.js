@@ -3,6 +3,40 @@ import { useForm } from 'react-hook-form'
 import fire from './utils/firebase';
 import './App.css';
 
+function SignupView(){
+  const { register, errors, handleSubmit } = useForm()
+  const onSubmit = data => {
+    console.log(data)
+    fire.auth().createUserWithEmailAndPassword(data.email, data.password)
+    .then( u => console.log(u))
+    .catch(err => console.error(err))
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+    <h1>Sign up</h1>
+    <label>First Name:</label>
+    <input name="firstName" ref={register({ required: true, maxLength: 20 })}  />
+    {errors.firstName && <p>This is required</p>}
+    <label>Last Name:</label>
+    <input name="lastName" ref={register({ required: true, maxLength: 20 })}  />
+    {errors.lastName && <p>{errors.lastName.message}</p>}
+    <label>Gender:</label>
+    <select name="gender" ref={register}>
+      <option value="male">male</option>
+      <option value="female">female</option>
+    </select>
+    <label>Email:</label>
+    <input name="email" ref={register({ required:true })} />
+    {errors.email && <p>{errors.email.message}</p>}
+    <label>Password:</label>
+    <input name="password" ref={register({ required: true })} type="password" />
+    {errors.password && <p>{errors.password.message}</p>}
+    <input type="submit" />
+  </form>
+  );
+}
+
 function LoginView({ onClick }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,14 +93,6 @@ function logout() {
 
 export default function App() {
   const [user, setUser] = useState({ loggedIn: false });
-  const { register, errors, handleSubmit } = useForm()
-  
-  const onSubmit = data => {
-    console.log(data)
-    fire.auth().createUserWithEmailAndPassword(data.email, data.password)
-    .then( u => console.log(u))
-    .catch(err => console.error(err))
-  }
   
   useEffect(() => {
     const unsubscribe = onAuthStateChange(setUser);
@@ -82,32 +108,14 @@ export default function App() {
   const requestLogout = () => {
     logout();
   }
-  
+   if(!user.loggedIn){
+     return null;
+   }
   return (
     <div className="App">
       Welcome to Household Inventory App
       { user.loggedIn ? <LogoutView onClick={requestLogout} /> : ''}
-    {user.loggedIn ? '': <form onSubmit={handleSubmit(onSubmit)}>
-        <h1>Sign up</h1>
-        <label>First Name:</label>
-        <input name="firstName" ref={register({ required: true, maxLength: 20 })}  />
-        {errors.firstName && <p>This is required</p>}
-        <label>Last Name:</label>
-        <input name="lastName" ref={register({ required: true, maxLength: 20 })}  />
-        {errors.lastName && <p>{errors.lastName.message}</p>}
-        <label>Gender:</label>
-        <select name="gender" ref={register}>
-          <option value="male">male</option>
-          <option value="female">female</option>
-        </select>
-        <label>Email:</label>
-        <input name="email" ref={register({ required:true })} />
-        {errors.email && <p>{errors.email.message}</p>}
-        <label>Password:</label>
-        <input name="password" ref={register({ required: true })} type="password" />
-        {errors.password && <p>{errors.password.message}</p>}
-        <input type="submit" />
-      </form>}  
+    {user.loggedIn ? '': <SignupView />}  
     </div>
   );
 }
