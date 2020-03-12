@@ -113,9 +113,11 @@ export default function App() {
    }
   return (
     <div className="App">
+      <div className="Homescreen">
       Welcome to Household Inventory App
       { user.loggedIn ? <LogoutView onClick={requestLogout} /> : ''}
     {user.loggedIn ? '': <SignupView />}  
+      </div>
     </div>
   );
 }
